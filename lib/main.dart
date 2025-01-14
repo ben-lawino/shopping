@@ -38,24 +38,28 @@ class ShList extends StatefulWidget {
 
 class _ShListState extends State<ShList> {
   DbHelper helper = DbHelper();
+  late List<ShoppingList> shoppingList;
 
   Future showData () async{
     await helper.openDb();
-    ShoppingList list = ShoppingList(0, 'Bakery', 2);
-    int listId = await helper.insertList(list);
+    shoppingList = await helper.getLists();
 
-    ListItem item = ListItem(0, listId, 'Bread', '1kg', 'done');
-    int itemId = await helper.insertItem(item);
-
-    print('List Id: ' + listId.toString());
-    print('Item Id: ' + itemId.toString());
+    setState(() {
+      shoppingList = shoppingList;
+    });
   }
-
 
   @override
   Widget build(BuildContext context) {
 
     showData();
-    return Container();
+    return ListView.builder(
+        itemCount: (shoppingList != null)? shoppingList.length : 0,
+        itemBuilder: (BuildContext context, int index){
+          return ListTile(
+            title: Text(shoppingList[index].name),
+          );
+        }
+    );
   }
 }
