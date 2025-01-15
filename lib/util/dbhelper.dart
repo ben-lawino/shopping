@@ -62,14 +62,48 @@ class DbHelper {
     return id;
   }
 
-  //Retrieve the contents of the list tables
-  Future <List<ShoppingList>> getLists() async{
+  // Retrieves the contents of the 'lists' table from the database
+  Future<List<ShoppingList>> getLists() async {
+    // Query the 'lists' table and get a list of maps
     final List<Map<String, dynamic>> maps = await db!.query('lists');
-    return List.generate(maps.length, (i){
+
+    // Generate and return a list of ShoppingList objects from the maps
+    return List.generate(maps.length, (i) {
       return ShoppingList(
-        maps[i]['id'],
-        maps[i]['name'],
-        maps[i]['priority'],);
+        maps[i]['id'],        // Map the 'id' field
+        maps[i]['name'],      // Map the 'name' field
+        maps[i]['priority'],  // Map the 'priority' field
+      );
     });
   }
+
+  // Retrieves the list of items from the 'items' table for a specific list ID
+  Future<List<ListItem>> getItems(int idList) async {
+    // Query the 'items' table with a condition to filter by the given list ID
+    final List<Map<String, dynamic>> maps = await db!.query(
+      'items',
+      where: 'idList = ?', // SQL WHERE clause
+      whereArgs: [idList], // Arguments for the WHERE clause
+    );
+
+    // Generate and return a list of ListItem objects from the query result
+    return List.generate(maps.length, (i) {
+      return ListItem(
+        maps[i]['id'],        // Map the 'id' field
+        maps[i]['idList'],    // Map the 'idList' field
+        maps[i]['name'],      // Map the 'name' field
+        maps[i]['quantity'],  // Map the 'quantity' field
+        maps[i]['note'],      // Map the 'note' field
+      );
+    });
+  }
+
+  static final DbHelper _dbHelper =DbHelper._internal();
+
+  DbHelper._internal();
+
+  factory DbHelper (){
+    return _dbHelper;
+  }
+
 }

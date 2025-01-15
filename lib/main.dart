@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shopping/models/list_items.dart';
 import 'package:shopping/models/shopping_list.dart';
+import 'package:shopping/ui/items_screen.dart';
 import 'package:shopping/util/dbhelper.dart';
 
 void main() {
@@ -14,15 +14,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Shopping List',
-      theme: ThemeData(
-        primarySwatch: Colors.blue
-      ),
+      theme: ThemeData(primarySwatch: Colors.deepPurple,
+      appBarTheme: AppBarTheme(
+          backgroundColor: Colors.deepPurple,
+          foregroundColor: Colors.white
+      )),
       home: Scaffold(
-        appBar: AppBar(title: Text('Shopping List'),),
+        appBar: AppBar(
+          title: Text(
+            'Shopping List',
+            style: TextStyle( fontWeight: FontWeight.w500),
+          ),
+        ),
         body: ShList(),
       ),
     );
@@ -40,7 +46,7 @@ class _ShListState extends State<ShList> {
   DbHelper helper = DbHelper();
   late List<ShoppingList> shoppingList;
 
-  Future showData () async{
+  Future showData() async {
     await helper.openDb();
     shoppingList = await helper.getLists();
 
@@ -51,15 +57,21 @@ class _ShListState extends State<ShList> {
 
   @override
   Widget build(BuildContext context) {
-
     showData();
     return ListView.builder(
-        itemCount: (shoppingList != null)? shoppingList.length : 0,
-        itemBuilder: (BuildContext context, int index){
+        itemCount: (shoppingList != null) ? shoppingList.length : 0,
+        itemBuilder: (BuildContext context, int index) {
           return ListTile(
+            leading: CircleAvatar(
+              child: Text(shoppingList[index].priority.toString()),
+            ),
             title: Text(shoppingList[index].name),
+            trailing: IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+            onTap: (){
+              Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ItemsScreen(shoppingList: shoppingList[index],)));
+            },
           );
-        }
-    );
+        });
   }
 }
