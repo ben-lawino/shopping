@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shopping/models/shopping_list.dart';
 import 'package:shopping/ui/items_screen.dart';
+import 'package:shopping/ui/shopping_list_dialog.dart';
 import 'package:shopping/util/dbhelper.dart';
 
 void main() {
@@ -45,6 +46,7 @@ class ShList extends StatefulWidget {
 class _ShListState extends State<ShList> {
   DbHelper helper = DbHelper();
   late List<ShoppingList> shoppingList;
+  late ShoppingListDialog dialog;
 
   Future showData() async {
     await helper.openDb();
@@ -56,6 +58,11 @@ class _ShListState extends State<ShList> {
   }
 
   @override
+  void initState(){
+    dialog = ShoppingListDialog();
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
     showData();
     return ListView.builder(
@@ -66,7 +73,10 @@ class _ShListState extends State<ShList> {
               child: Text(shoppingList[index].priority.toString()),
             ),
             title: Text(shoppingList[index].name),
-            trailing: IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+            trailing: IconButton(onPressed: () {
+              showDialog(context: context, builder: (BuildContext context) =>
+              dialog.buildDialog(context, shoppingList[index], false));
+            }, icon: Icon(Icons.edit)),
             onTap: (){
               Navigator.push(context,
               MaterialPageRoute(builder: (context) => ItemsScreen(shoppingList: shoppingList[index],)));
