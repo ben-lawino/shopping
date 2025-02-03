@@ -65,23 +65,36 @@ class _ShListState extends State<ShList> {
 
   Widget build(BuildContext context) {
     showData();
-    return ListView.builder(
-        itemCount: (shoppingList != null) ? shoppingList.length : 0,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            leading: CircleAvatar(
-              child: Text(shoppingList[index].priority.toString()),
+    return Scaffold(
+      body: ListView.builder(
+          itemCount: (shoppingList != null) ? shoppingList.length : 0,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              leading: CircleAvatar(
+                child: Text(shoppingList[index].priority.toString()),
+              ),
+              title: Text(shoppingList[index].name),
+              trailing: IconButton(onPressed: () {
+                showDialog(context: context, builder: (BuildContext context) =>
+                dialog.buildDialog(context, shoppingList[index], false));
+              }, icon: Icon(Icons.edit)),
+              onTap: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ItemsScreen(shoppingList: shoppingList[index],)));
+              },
+            );
+          }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          showDialog(context: context,
+            builder: (BuildContext context) => dialog.buildDialog(
+                context, ShoppingList(0, '', 0),true
             ),
-            title: Text(shoppingList[index].name),
-            trailing: IconButton(onPressed: () {
-              showDialog(context: context, builder: (BuildContext context) =>
-              dialog.buildDialog(context, shoppingList[index], false));
-            }, icon: Icon(Icons.edit)),
-            onTap: (){
-              Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ItemsScreen(shoppingList: shoppingList[index],)));
-            },
           );
-        });
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.pink,
+      ),
+    );
   }
 }
