@@ -98,6 +98,15 @@ class DbHelper {
     });
   }
 
+
+  Future <int> deleteList(ShoppingList list) async{
+    int result = await db!.delete("items", where: "idList = ?",
+    whereArgs: [list.id]);
+    result = await db!.delete("lists", where: "idList = ?",
+        whereArgs: [list.id]);
+    return result;
+  }
+
   static final DbHelper _dbHelper =DbHelper._internal();
 
   DbHelper._internal();

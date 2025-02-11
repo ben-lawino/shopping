@@ -19,15 +19,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Shopping List',
       theme: ThemeData(primarySwatch: Colors.deepPurple,
-      appBarTheme: AppBarTheme(
-          backgroundColor: Colors.deepPurple,
-          foregroundColor: Colors.white
-      )),
+          appBarTheme: AppBarTheme(
+              backgroundColor: Colors.deepPurple,
+              foregroundColor: Colors.white
+          )),
       home: Scaffold(
         appBar: AppBar(
           title: Text(
             'Shopping List',
-            style: TextStyle( fontWeight: FontWeight.w500),
+            style: TextStyle(fontWeight: FontWeight.w500),
           ),
         ),
         body: ShList(),
@@ -58,7 +58,7 @@ class _ShListState extends State<ShList> {
   }
 
   @override
-  void initState(){
+  void initState() {
     dialog = ShoppingListDialog();
     super.initState();
   }
@@ -69,27 +69,39 @@ class _ShListState extends State<ShList> {
       body: ListView.builder(
           itemCount: (shoppingList != null) ? shoppingList.length : 0,
           itemBuilder: (BuildContext context, int index) {
-            return ListTile(
+            return Dismissible(
+                key: Key(shoppingList[index].name),
+                onDismissed: (direction){
+                  String strName = shoppingList[index].name;
+                  helper.deleteList(shoppingList[index]);
+                  setState(() {
+                    shoppingList.removeAt(index);
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$strName deleted")));
+                },
+                child: ListTile(
               leading: CircleAvatar(
                 child: Text(shoppingList[index].priority.toString()),
               ),
               title: Text(shoppingList[index].name),
               trailing: IconButton(onPressed: () {
                 showDialog(context: context, builder: (BuildContext context) =>
-                dialog.buildDialog(context, shoppingList[index], false));
+                    dialog.buildDialog(context, shoppingList[index], false));
               }, icon: Icon(Icons.edit)),
-              onTap: (){
+              onTap: () {
                 Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ItemsScreen(shoppingList: shoppingList[index],)));
+                    MaterialPageRoute(builder: (context) =>
+                        ItemsScreen(shoppingList: shoppingList[index],)));
               },
-            );
+            ));
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           showDialog(context: context,
-            builder: (BuildContext context) => dialog.buildDialog(
-                context, ShoppingList(0, '', 0),true
-            ),
+            builder: (BuildContext context) =>
+                dialog.buildDialog(
+                    context, ShoppingList(0, '', 0), true
+                ),
           );
         },
         child: Icon(Icons.add),
