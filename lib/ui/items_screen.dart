@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopping/models/list_items.dart';
 import 'package:shopping/models/shopping_list.dart';
+import 'package:shopping/ui/list_item_dialog.dart';
 import 'package:shopping/util/dbhelper.dart';
 
 // Screen to display and manage items in a shopping list
@@ -35,6 +36,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    ListItemDialog dialog = new ListItemDialog();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.shoppingList.name), // Display the shopping list name in the app bar
@@ -48,11 +52,26 @@ class _ItemsScreenState extends State<ItemsScreen> {
             subtitle: Text(
                 'Quantity: ${items[index].quantity} - Note: ${items[index].note}'), // Display quantity and note
             trailing: IconButton(
-                onPressed: () {}, // Placeholder for edit functionality
+                onPressed: () {
+                  showDialog(context: context,
+                      builder: (BuildContext context) =>
+                          dialog.buildAlert(context, items[index], false));
+                }, // Placeholder for edit functionality
                 icon: Icon(Icons.edit) // Icon for editing the item
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => dialog.buildAlert(
+                context, ListItem(0, widget.shoppingList.id, '', '', ''), true),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.pink,
       ),
     );
   }

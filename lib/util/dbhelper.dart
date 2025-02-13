@@ -8,8 +8,16 @@ class DbHelper {
   final int version = 1;
   Database? db;
 
+  static final DbHelper _dbHelper =DbHelper._internal();
+
+  DbHelper._internal();
+
+  factory DbHelper (){
+    return _dbHelper;
+  }
+
   // Open the database and enable foreign keys
-  Future<Database> openDb() async {
+  Future<Database?> openDb() async {
     if (db == null) {
       db = await openDatabase(
         join(await getDatabasesPath(), 'shopping.db'),
@@ -39,7 +47,7 @@ class DbHelper {
       // Enable foreign key support in SQLite
       await db!.execute('PRAGMA foreign_keys = ON;');
     }
-    return db!;
+    return db;
   }
 
   // Insert a shopping list into the database
@@ -102,17 +110,9 @@ class DbHelper {
   Future <int> deleteList(ShoppingList list) async{
     int result = await db!.delete("items", where: "idList = ?",
     whereArgs: [list.id]);
-    result = await db!.delete("lists", where: "idList = ?",
+      result = await db!.delete("lists", where: "idList = ?",
         whereArgs: [list.id]);
     return result;
-  }
-
-  static final DbHelper _dbHelper =DbHelper._internal();
-
-  DbHelper._internal();
-
-  factory DbHelper (){
-    return _dbHelper;
   }
 
 }
