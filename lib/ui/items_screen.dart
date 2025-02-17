@@ -47,17 +47,28 @@ class _ItemsScreenState extends State<ItemsScreen> {
         itemCount: items.length, // Count the number of items to display
         itemBuilder: (BuildContext context, int index) {
           // Display each item in a ListTile
-          return ListTile(
-            title: Text(items[index].name), // Display the item's name
-            subtitle: Text(
-                'Quantity: ${items[index].quantity} - Note: ${items[index].note}'), // Display quantity and note
-            trailing: IconButton(
-                onPressed: () {
-                  showDialog(context: context,
-                      builder: (BuildContext context) =>
-                          dialog.buildAlert(context, items[index], false));
-                }, // Placeholder for edit functionality
-                icon: Icon(Icons.edit) // Icon for editing the item
+          return Dismissible(
+            key:  Key(items[index].name),
+            onDismissed: (direction){
+              String strName = items[index].name;
+              helper.deleteItem(items[index]);
+              setState(() {
+                items.removeAt(index);
+              });
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("$strName deleted")));
+            },
+            child: ListTile(
+              title: Text(items[index].name), // Display the item's name
+              subtitle: Text(
+                  'Quantity: ${items[index].quantity} - Note: ${items[index].note}'), // Display quantity and note
+              trailing: IconButton(
+                  onPressed: () {
+                    showDialog(context: context,
+                        builder: (BuildContext context) =>
+                            dialog.buildAlert(context, items[index], false));
+                  }, // Placeholder for edit functionality
+                  icon: Icon(Icons.edit) // Icon for editing the item
+              ),
             ),
           );
         },
@@ -70,8 +81,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
                 context, ListItem(0, widget.shoppingList.id, '', '', ''), true),
           );
         },
-        child: Icon(Icons.add),
         backgroundColor: Colors.pink,
+        child: Icon(Icons.add,color: Colors.white,),
       ),
     );
   }

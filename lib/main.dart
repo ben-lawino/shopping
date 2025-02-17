@@ -105,7 +105,7 @@ class _ShListState extends State<ShList> {
             builder: (context) => dialog.buildDialog(context, ShoppingList(0, '', 0), true),
           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add,color: Colors.white,),
         backgroundColor: Colors.pink,
       ),
     );
